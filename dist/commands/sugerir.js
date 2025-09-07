@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from "discord.js";
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const filePath = path.join(__dirname, '../data/filmes.json');
+const filePath = path.join(__dirname, "../../data/filmes.json");
 function carregarFilmes() {
     return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }

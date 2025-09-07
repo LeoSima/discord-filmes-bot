@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from "discord.js";
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const filePath = path.join(__dirname, '../data/filmes.json');
+const filePath = path.join(__dirname, "../../data/filmes.json");
 function carregarFilmes() {
     return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
@@ -17,10 +17,10 @@ export const data = new SlashCommandBuilder()
     .addStringOption(option => option.setName("nome").setDescription("Nome do filme"))
     .addIntegerOption(option => option.setName("id").setDescription("ID do filme"));
 export async function execute(interaction) {
-    const nome = interaction.options.getString('nome');
-    const id = interaction.options.getInteger('id');
+    const nome = interaction.options.getString("nome");
+    const id = interaction.options.getInteger("id");
     if (!nome && !id) {
-        await interaction.reply('❗ Forneça o nome ou o ID do filme.');
+        await interaction.reply("❗ Forneça o nome ou o ID do filme");
         return;
     }
     let filmes = carregarFilmes();
@@ -32,7 +32,7 @@ export async function execute(interaction) {
         indexRemovido = filmes.findIndex((f) => f.nome.toLowerCase() === nome.toLowerCase());
     }
     if (indexRemovido === -1) {
-        await interaction.reply('❌ Filme não encontrado');
+        await interaction.reply("❌ Filme não encontrado");
         return;
     }
     filmes.splice(indexRemovido, 1);
@@ -42,5 +42,5 @@ export async function execute(interaction) {
         nome: filme.nome,
     }));
     salvarFilmes(filmes);
-    await interaction.reply('🗑️ Filme removido com sucesso');
+    await interaction.reply("🗑️ Filme removido com sucesso");
 }
