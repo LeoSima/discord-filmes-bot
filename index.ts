@@ -2,7 +2,7 @@ import { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder, Collectio
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,20 +10,25 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-const commands: any[] = [];
-const commandFiles = fs.readdirSync(path.join(__dirname, "commands")).filter(file => file.endsWith(".ts"));
 const commandCollection = new Collection<string, any>();
 
-for (const file of commandFiles) {
-	const command = await import(`./commands/${file}`);
-	commands.push(command.data.toJSON());
-	commandCollection.set(command.data.name, command);
-}
+async function loadCommands() {
+	const commands: any[] = [];
+	const commandFiles = fs.readdirSync(path.join(__dirname, "commands")).filter(file => file.endsWith(".js"));
 
+	for (const file of commandFiles) {
+		const { data, execute } = await import(`./commands/${file}`);
+		commands.push(data.toJSON());
+		commandCollection.set(data.name, { data, execute });
+	}
+	return commands;
+}
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN!);
 
 (async () => {
+	const commands = await loadCommands();
+
 	try {
 		await rest.put(
 			Routes.applicationGuildCommands(process.env.CLIENT_ID!, process.env.GUILD_ID!),
